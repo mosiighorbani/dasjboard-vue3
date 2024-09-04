@@ -103,8 +103,7 @@
 </template>
 
 <script setup>
-import router from '@/router';
-import Swal from 'sweetalert2';
+import { useAuthStore } from "@/stores/auth";
 import { ref } from "vue";
 
 
@@ -114,33 +113,10 @@ function toggleSidebar(){
     open.value = !open.value;
 }
 
+const store = useAuthStore();
 
 async function logout(){
-    let token = JSON.parse(localStorage.getItem('access_token'));
-    console.log("logout is clicked", token, typeof(token));
-    await fetch("http://127.0.0.1:8000/api/auth/logout", {
-        method: "POST",
-        headers: {Authorization: `Bearer ${token}`}
-    })
-    .then((response) => {
-        if(response.status == 200){
-            localStorage.removeItem('access_token')
-            localStorage.removeItem('refresh_token')
-            Swal.fire({
-            position: "top-start",
-            toast: "true",
-            timerProgressBar: "true",
-            icon: "warning",
-            title: "شما از سایت خارج شدید",
-            showConfirmButton: false,
-            timer: 5000
-            });
-            router.push({name:'login'})
-        } else{
-            console.log(response)
-        }
-    })
-    .catch((error) => console.log(error));
+    store.logout()
 }
 
 </script>

@@ -50,11 +50,13 @@
 </template>
 
 <script setup>
-import router from '@/router';
-import Swal from 'sweetalert2';
+import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 
 
+
+
+const store = useAuthStore();
 
 const formData = ref({
     phone: '',
@@ -82,40 +84,14 @@ function check_form_errors(){
     }
 }
 
-async function login() {
+function login() {
     check_form_errors();
     const data = {
         phone: formData.value.phone,
         password: formData.value.password,
     };
-    await fetch("http://127.0.0.1:8000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if(data.access_token){
-            console.log(data)
-            localStorage.setItem('access_token', JSON.stringify(data.access_token))
-            localStorage.setItem('refresh_token', JSON.stringify(data.refresh_token))
-            Swal.fire({
-            position: "top-start",
-            toast: "true",
-            timerProgressBar: "true",
-            icon: "success",
-            title: " ورود شما با موفقیت انجام شد",
-            showConfirmButton: false,
-            timer: 5000
-            });
-            router.push({name:'home'})
-        } else{
-            console.log(data)
-        }
-    })
-    .catch((error) => console.log(error));
-    }
-
+    store.login(data)
+}
 </script>
 
 <style>

@@ -73,8 +73,7 @@
 </template>
 
 <script setup>
-import router from '@/router';
-import Swal from 'sweetalert2';
+import { useAuthStore } from '@/stores/auth';
 import { ref } from 'vue';
 
 
@@ -115,6 +114,7 @@ function check_form_errors(){
     }
 }
 
+const store = useAuthStore()
 async function register() {
     check_form_errors();
     const data = {
@@ -122,26 +122,7 @@ async function register() {
         phone: formData.value.phone,
         password: formData.value.password,
     };
-    await fetch("http://127.0.0.1:8000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    })
-    .then((response) => {
-        if (response.status == 201){
-            Swal.fire({
-            position: "top-start",
-            toast: "true",
-            timerProgressBar: "true",
-            icon: "success",
-            title: "ثبت نام شما با موفقیت انجام شد",
-            showConfirmButton: false,
-            timer: 5000
-            });
-            router.push({name:'login'})
-        }
-    })
-    .catch((error) => console.log(error));
+    store.register(data)
     }
 
 </script>
